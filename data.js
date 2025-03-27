@@ -1,1 +1,1 @@
-const mascotas = [];
+const mascotas = JSON.parse(localStorage.getItem("mascotas")) || [];
