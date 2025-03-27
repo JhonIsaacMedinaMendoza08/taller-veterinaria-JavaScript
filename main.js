@@ -13,6 +13,8 @@ async function registrarMascota() {
     //GUARDA EN EL LOCAL STORAGE
     localStorage.setItem("mascotas", JSON.stringify(mascotas));
     alert(`Mascota "${nombre}" registrada con éxito.`); //MENSAJE DE REGISTRO EXITOSO DE LA MASCOTA
+    console.log(mascotas);
+    
 }
 /*------------FUNCION PARA LISTAR MASCOTAS REGISTRADAS------------*/ 
 //
@@ -27,9 +29,39 @@ function listarMascotas() {
     mascotas.forEach(m => {
         lista += `🐾 ${m.nombre} - ${m.especie} - ${m.edad} años - ${m.peso} kg - Estado: ${m.estado}\n`;
     });
-
     alert(lista);
 }
+/*------------FUNCION PARA BUSCAR MASCOTAS REGISTRADAS POR NOMBRE------------*/ 
+async function buscarMascota() {
+    let nombre = prompt("Ingrese el nombre de la mascota a buscar:");
+    alert("Buscando mascota... ⏳");
+    await delayPromise(1000);
+
+    //VERIFICA SI EL ARRAY TIENE DATOS
+    console.log("Mascotas almacenadas:", mascotas);
+
+    let mascota = mascotas.find(m => m.nombre.toLowerCase() === nombre.toLowerCase());
+
+    if (mascota) {
+        alert(`🐾 ${mascota.nombre} - ${mascota.especie} - ${mascota.edad} años - ${mascota.peso} kg - Estado: ${mascota.estado}`);
+    } else {
+        alert("Mascota no encontrada.");
+    }
+}
+/*------------FUNCION PARA ELIMINAR MASCOTAS REGISTRADAS POR NOMBRE------------*/ 
+async function eliminarMascota() {
+    let nombre = prompt("Ingrese el nombre de la mascota a eliminar:");
+    let index = mascotas.findIndex(mascota => mascota.nombre.toLowerCase() === nombre.toLowerCase());
+
+    if (index !== -1) {
+        mascotas.splice(index, 1);
+        localStorage.setItem("mascotas", JSON.stringify(mascotas)); // Guardar cambios en localStorage
+        alert(`Mascota "${nombre}" eliminada con éxito.`);
+    } else {
+        alert("Mascota no encontrada.");
+    }
+}
+
 async function menu() {
     let opcion;
     do {
@@ -43,20 +75,21 @@ async function menu() {
 Seleccione una opción:`);
 
         switch (opcion) {
+            // EL AWAIT ASEGURA QUE TERMINE LA PROMESA ANTES DE CONTINUAR
             case "1":
-                await registrarMascota(); // 👈 Asegura que termine antes de continuar
+                await registrarMascota(); 
                 break;
             case "2":
                 listarMascotas();
                 break;
             case "3":
-                buscarMascota();
+                await buscarMascota(); 
                 break;
             case "4":
                 actualizarEstadoSalud();
                 break;
             case "5":
-                eliminarMascota();
+                await eliminarMascota(); 
                 break;
             case "6":
                 alert("Saliendo del sistema...");
