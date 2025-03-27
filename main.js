@@ -1,3 +1,17 @@
+
+function registrarMascota() {
+    let nombre = prompt("Ingrese el nombre de la mascota:");
+    let especie = (prompt("Ingrese la especie (Perro, Gato, etc.):"));
+    let edad = parseInt(prompt("Ingrese la edad de la mascota:"));
+    let peso = parseFloat(prompt("Ingrese el peso de la mascota en kg:"));
+    let estado = validarEntrada(prompt("Ingrese el estado de salud (Sano, Enfermo, En tratamiento):"), ["Sano", "Enfermo", "En tratamiento"]);
+
+    delay(2000, () => {
+        mascotas.push({ nombre, especie, edad, peso, estado });
+        alert(`Mascota "${nombre}" registrada con éxito.`);
+    });
+}
+
 function menu() {
     let opcion;
     do {
