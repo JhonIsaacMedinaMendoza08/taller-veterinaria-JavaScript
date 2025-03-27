@@ -1,91 +1,8 @@
 
-/*------------FUNCION PARA REGISTRAR NUEVAS MASCOTAS------------*/ 
-async function registrarMascota() {
-    let nombre = prompt("Ingrese el nombre de la mascota:");
-    let especie = prompt("Ingrese la especie (Perro, Gato, etc.):");
-    let edad = parseInt(prompt("Ingrese la edad de la mascota:"));
-    let peso = parseFloat(prompt("Ingrese el peso de la mascota en kg:"));
-    let estado = validarEntrada(prompt("Ingrese el estado de salud (Sano, Enfermo, En tratamiento):"), ["Sano", "Enfermo", "En tratamiento"]);
-
-    alert("Registrando mascota... ");
-    await delayPromise(2000);  // REALIZA UN RETARDO DE 2 SEGUNDOS
-    mascotas.push({ nombre, especie, edad, peso, estado }); //GUARDA LA DATA EN EL ARRAY
-    //GUARDA EN EL LOCAL STORAGE
-    localStorage.setItem("mascotas", JSON.stringify(mascotas));
-    alert(`Mascota "${nombre}" registrada con éxito.`); //MENSAJE DE REGISTRO EXITOSO DE LA MASCOTA
-    console.log(mascotas);
-    
-}
-/*------------FUNCION PARA LISTAR MASCOTAS REGISTRADAS------------*/ 
-//
-function listarMascotas() {
-    //VERIFICA SI HAY MASCOTAS REGISTRADAS Y SI NO ARROJA MENSAJE DE ALERTA 
-    if (mascotas.length === 0) {
-        alert("No hay mascotas registradas.");
-        return;
-    }
-    //\n GENERA UN SALTO DE LINEA, ACA RECORRE EL ARRAY DE MASCOTAS Y MUESTRA LA DATA EN UNA ALERTA.
-    let lista = "Mascotas registradas:\n";
-    mascotas.forEach(m => {
-        lista += `🐾 ${m.nombre} - ${m.especie} - ${m.edad} años - ${m.peso} kg - Estado: ${m.estado}\n`;
-    });
-    alert(lista);
-}
-/*------------FUNCION PARA BUSCAR MASCOTAS REGISTRADAS POR NOMBRE------------*/ 
-async function buscarMascota() {
-    let nombre = prompt("Ingrese el nombre de la mascota a buscar:");
-    alert("Buscando mascota... ");
-    await delayPromise(1000);
-
-    //VERIFICA SI EL ARRAY TIENE DATOS
-    console.log("Mascotas almacenadas:", mascotas);
-
-    let mascota = mascotas.find(m => m.nombre.toLowerCase() === nombre.toLowerCase());
-
-    if (mascota) {
-        alert(` ${mascota.nombre} - ${mascota.especie} - ${mascota.edad} años - ${mascota.peso} kg - Estado: ${mascota.estado}`);
-    } else {
-        alert("Mascota no encontrada.");
-    }
-}
-/*------------FUNCION PARA ACTUALIZAR MASCOTAS REGISTRADAS POR NOMBRE------------*/ 
-async function actualizarEstadoSalud() {
-    let nombre = prompt("Ingrese el nombre de la mascota:");
-    let mascota = mascotas.find(m => m.nombre.toLowerCase() === nombre.toLowerCase());
-
-    if (!mascota) {
-        alert("Mascota no encontrada.");
-        return;
-    }
-
-    let nuevoEstado = validarEntrada(prompt("Ingrese el nuevo estado de salud (Sano, Enfermo, En tratamiento):"), ["Sano", "Enfermo", "En tratamiento"]);
-
-    alert("Actualizando estado de salud... ⏳");
-    await delayPromise(2000);        
-    mascota.estado = nuevoEstado;
-        
-    localStorage.setItem("mascotas", JSON.stringify(mascotas)); // GUARDAR LOS CAMBIOS DIRECTAMENTE EN EL LOCAL STORAGE 
-
-    alert(`Estado de salud actualizado: ${mascota.nombre} ahora está "${nuevoEstado}".`);
-    ;
-}
-
-/*------------FUNCION PARA ELIMINAR MASCOTAS REGISTRADAS POR NOMBRE------------*/ 
-async function eliminarMascota() {
-    let nombre = prompt("Ingrese el nombre de la mascota a eliminar:");
-    let index = mascotas.findIndex(mascota => mascota.nombre.toLowerCase() === nombre.toLowerCase());
-
-    if (index !== -1) {
-        mascotas.splice(index, 1);
-        localStorage.setItem("mascotas", JSON.stringify(mascotas)); // GUARDAR LOS CAMBIOS DIRECTAMENTE EN EL LOCAL STORAGE 
-        alert(`Mascota "${nombre}" eliminada con éxito.`);
-    } else {
-        alert("Mascota no encontrada.");
-    }
-}
-
+/*CREAMOS PRIMERAMENTE EL MENU INTERACTIVO PARA EL USUARIO*/
 async function menu() {
-    let opcion;
+    console.log("Bienvenido al sistema de gestión de datos de mascotas");
+    let opcion ;
     do {
         opcion = prompt(`📋 Menú Veterinaria
             1. Registrar nueva mascota
@@ -95,31 +12,130 @@ async function menu() {
             5. Eliminar mascota
             6. Salir
             Seleccione una opción:`);
-
         switch (opcion) {
-            // EL AWAIT ASEGURA QUE TERMINE LA PROMESA ANTES DE CONTINUAR
             case "1":
-                await registrarMascota(); 
+                await registrarMascota();
                 break;
             case "2":
-                listarMascotas();
+                await listarMascotas();
                 break;
             case "3":
-                await buscarMascota(); 
+                await buscarMascota();
                 break;
             case "4":
-                await actualizarEstadoSalud();
+                await actualizarSaludMascota();
                 break;
             case "5":
-                await eliminarMascota(); 
+                await eliminarMascota();
                 break;
             case "6":
-                alert("Saliendo del sistema...");
+                console.log("Gracias por utilizar el sistema de gestión de datos de mascotas");
+                alert ("Gracias por utilizar el sistema de gestión de datos de mascotas... ");
                 break;
             default:
-                alert("Opción inválida. Intente de nuevo.");
+                console.log("Opción no válida, por favorseleccione una opción válida");
+                alert("Opción no válida, por favor seleccione unaopción válida");
+                }
         }
-    } while (opcion !== "6");
+        while (opcion != "6");
+}
+menu();
+
+/*FUNCION PARA REALIZAR EL RETRASO POR MEDIO DE MS*/
+
+function delayPromise(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+/*CREAMOS LA FUNCION PARA REGISTRAR NUEVA MASCOTA*/
+async function registrarMascota(){
+    let nombre = prompt("Ingrese el nombre de la mascota:");
+    let especie = prompt("Ingrese la especie de la mascota:");
+    let edad = prompt("Ingrese la edad de la mascota:");
+    let peso = Number(prompt("Ingrese el peso de la mascota:"));
+    let salud = prompt("Ingrese el estado de salud de la mascota: (Sano, Enfermo, En tratamiento");
+
+    alert("Se esta registrando una nueva mascota...");
+    await delayPromise(2500)
+
+    mascotas.push({nombre,especie,edad,peso,salud})
+    localStorage.setItem("mascotas", JSON.stringify(mascotas));
+    alert("Mascota " + nombre + " fue registrada con éxito");
+    console.log(mascotas);
+
+}
+/*CREAMOS LA FUNCION PARA LISTAR TODAS LAS MASCOTAS*/
+async function listarMascotas(){
+    alert("Se esta listando las mascotas...");
+        if (mascotas.length == 0){
+            alert("No hay mascotas registradas");
+        return;
+        }
+        let lista = "Mascotas registradas :\n";
+        mascotas.forEach(animal => {
+            lista += `Nombre: ${animal.nombre}\n`;
+            lista += `Especie: ${animal.especie}\n`;
+            lista += `Edad: ${animal.edad}\n`;
+            lista += `Peso: ${animal.peso}\n`;
+            lista += `Salud: ${animal.salud}\n`;
+            lista += "------------------------\n";
+        });
+        alert(lista);
+        console.log(lista);
+        }
+
+/*CREAMOS LA FUNCION PARA BUSCAR MASCOTAS POR SU NOMBRE*/
+async function buscarMascota(){
+    let nombreMascota = prompt("Ingrese el nombre de la mascota que desea buscar:");
+    alert ("Se esta buscando la mascota en la base de datos...");
+    await delayPromise(1500);
+
+    let mascotaBuscada = mascotas.find(animal => animal.nombre.toLowerCase() === nombreMascota.toLowerCase());
+    if (mascotaBuscada){
+        console.log(mascotaBuscada);
+        let lista = "La mascota fue encontrada en la base de datos \n"
+            lista +=`Nombre: ${mascotaBuscada.nombre}\n`;
+            lista += `Especie: ${mascotaBuscada.especie}\n`;
+            lista += `Edad: ${mascotaBuscada.edad}\n`;
+            lista += `Peso: ${mascotaBuscada.peso}\n`;
+            lista += `Salud: ${mascotaBuscada.salud}\n`;
+            lista += "------------------------\n";
+        ;
+        alert(lista);
+    }else {
+            alert("La mascota " + nombreMascota + " no fue encontrada en la base de datos");
+        }
+}
+/*CREAMOS LA FUNCION PARA ELIMINAR MASCOTAS POR SU NOMBRE*/
+async function eliminarMascota(){
+    let nombreMascotaEliminar = prompt("Ingrese el nombre de la mascota que desea eliminar:");
+    let indexMascota = mascotas.findIndex(mascota => mascota.nombre.toLowerCase() === nombreMascotaEliminar.toLowerCase());
+
+    if (indexMascota !== -1){
+        mascotas.splice(indexMascota, 1)
+        localStorage.setItem("mascotas", JSON.stringify(mascotas));
+        await delayPromise(2000);
+        alert("La mascota " + nombreMascotaEliminar + " fue eliminada de la base de datos");
+    } else {
+        await delayPromise(2000);
+        alert("La mascota " + nombreMascotaEliminar + " no fue encontrada en la base de datos")
+    }
 }
 
-menu();
+/*CREAMOS LA FUNCION PARA ACTUALIZAR EL ESTADO DE SALUD DE LA MASCOTA POR SU NOMBRE*/
+async function actualizarSaludMascota(){
+    let nombreMascotaActualizar = prompt("Ingrese el nombre de la mascota que desea actualizar");
+    let saludMascotaActualizar = prompt("Ingrese el nuevo estado de salud de la mascota");
+    let indexMascotaAct = mascotas.findIndex(mascota => mascota.nombre.toLowerCase() === nombreMascotaActualizar.toLowerCase());
+    if (indexMascotaAct !== -1){
+        mascotas[indexMascotaAct].salud = saludMascotaActualizar;
+        localStorage.setItem("mascotas", JSON.stringify(mascotas));
+        await delayPromise(2000);
+        alert("El estado de salud de la mascota " + nombreMascotaActualizar + " ha sido actualizado satisfactoriamente");
+        console.log(mascotas);
+        
+    } else {
+        await delayPromise(2000);
+        alert("La mascota " + nombreMascotaActualizar + " no fue encontrada en la base de datos");
+        }
+    }
+
